@@ -1,9 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { caughtMonsters } from '$lib/stores';
-</script>
-
-<script>
   import "../app.css";
 </script>
 
