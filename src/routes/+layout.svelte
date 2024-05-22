@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { caughtMonsters } from '$lib/stores';
+  import "../app.css";
 </script>
 
 <div class="navbar">
