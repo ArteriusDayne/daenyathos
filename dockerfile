@@ -1,24 +1,37 @@
-FROM node:18 AS build
+# stage build
+FROM node:21-alpine
 
 WORKDIR /app
 
-COPY package*.json .
+# copy everything to the container
+COPY . .
 
+# clean install all dependencies
 RUN npm ci
 
-COPY . .
-RUN npm run prisma-generate
+# remove potential security issues
+RUN npm audit fix
+    
+# build SvelteKit app
 RUN npm run build
-RUN npm prune --production
 
-FROM node:18 AS run
 
-ENV NODE_ENV=production
+# stage run
+FROM node:21-alpine
 
 WORKDIR /app
-COPY --from=build /app/build ./build
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/prisma ./prisma
-RUN ulimit -c unlimited
-ENTRYPOINT ["node", "build"]
+
+# copy dependency list
+COPY --from=0 /app/package*.json ./
+
+# clean install dependencies, no devDependencies, no prepare script
+RUN npm ci --production --ignore-scripts
+
+# remove potential security issues
+RUN npm audit fix
+
+# copy built SvelteKit app to /app
+COPY --from=0 /app/build ./
+
+EXPOSE 3000
+CMD ["node", "./index.js"]
