@@ -3,6 +3,10 @@
   import { caughtMonsters } from '$lib/stores';
 </script>
 
+<script>
+  import "../app.css";
+</script>
+
 <div class="navbar">
   <a href="/" class:active={$page.url.pathname == '/'}>Home</a>
   <a href="/my-monsters" class:active={$page.url.pathname == '/my-monsters'}>
